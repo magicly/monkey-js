@@ -35,6 +35,24 @@ const EQ = '==';
 const NOT_EQ = '!=';
 const STRING = 'STRING';
 
+const keywords = {
+  fn: FUNCTION,
+  let: LET,
+  true: TRUE,
+  false: FALSE,
+  if: IF,
+  else: ELSE,
+  return: RETURN,
+};
+
+export function lookupIdent(ident: string): string {
+  const tok = keywords[ident];
+  if (tok) {
+    return tok;
+  }
+  return IDENT;
+}
+
 export { Token };
 export {
   ILLEGAL,
