@@ -1,6 +1,27 @@
 import { Lexer } from '../lexer/lexer';
 import * as token from '../lexer/token';
-import { Statement, Program, LetStatement, Identifier, ReturnStatement } from './ast';
+import {
+  Statement,
+  Program,
+  LetStatement,
+  Identifier,
+  ReturnStatement,
+  Expression,
+  ExpressionStatement,
+} from './ast';
+
+type prefixParseFn = () => Expression;
+type infixParseFn = (exp: Expression) => Expression;
+
+let order = 0;
+const LOWEST = order++;
+const EQUALS = order++;
+const LESSGREATER = order++;
+const SUM = order++;
+const PRODUCT = order++;
+const PREFIX = order++;
+const CALL = order++;
+const INDEX = order++;
 
 class Parser {
   lexer: Lexer;
@@ -8,11 +29,17 @@ class Parser {
   peekToken: token.Token;
   errors: Array<string> = [];
 
+  prefixParseFns: Map<token.TokenType, prefixParseFn>;
+  infixParseFns: Map<token.TokenType, infixParseFn>;
+
   constructor(lexer: Lexer) {
     this.lexer = lexer;
 
     this.nextToken();
     this.nextToken();
+
+    this.prefixParseFns = new Map();
+    this.registerPrefix(token.IDENT, this.parseIdentifier.bind(this));
   }
 
   nextToken() {
@@ -41,7 +68,29 @@ class Parser {
     if (this.curToken.type === token.RETURN) {
       return this.parseReturnStatement();
     }
-    return null;
+    return this.parseExpressionStatement();
+  }
+
+  parseExpressionStatement(): ExpressionStatement {
+    const stmt = new ExpressionStatement();
+    stmt.token = this.curToken;
+    stmt.expression = this.parseExpression(LOWEST);
+
+    if (this.peekTokenIs(token.SEMICOLON)) {
+      this.nextToken();
+    }
+    return stmt;
+  }
+
+  parseExpression(precedence: number): Expression {
+    const prefix = this.prefixParseFns[this.curToken.type];
+    if (prefix) {
+      return prefix();
+    }
+  }
+
+  parseIdentifier(): Expression {
+    return new Identifier(this.curToken, this.curToken.literal);
   }
 
   parseReturnStatement(): Statement {
@@ -96,6 +145,13 @@ class Parser {
   peekError(tt: token.TokenType) {
     const msg = `expected next token to be ${tt}, got ${this.peekToken.type} instead.`;
     this.errors.push(msg);
+  }
+
+  registerPrefix(tt: token.TokenType, fn: prefixParseFn) {
+    this.prefixParseFns[tt] = fn;
+  }
+  registerInfix(tt: token.TokenType, fn: infixParseFn) {
+    this.infixParseFns[tt] = fn;
   }
 }
 

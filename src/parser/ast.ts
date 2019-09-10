@@ -91,4 +91,12 @@ class Identifier implements Expression {
   }
 }
 
-export { Statement, Program, LetStatement, ReturnStatement, Identifier };
+export {
+  Statement,
+  Program,
+  LetStatement,
+  ReturnStatement,
+  Identifier,
+  Expression,
+  ExpressionStatement,
+};
