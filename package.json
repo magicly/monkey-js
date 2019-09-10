@@ -1,0 +1,25 @@
+{
+  "name": "monkey-ts",
+  "version": "1.0.0",
+  "description": "monkey script from <Writing An Interpreter In Go> implemented by TS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --opts ./mocha.opts"
+  },
+  "keywords": [
+    "interpreter",
+    "JS",
+    "TS",
+    "monkey"
+  ],
+  "author": "magicly",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.2.2",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.6.2"
+  }
+}
