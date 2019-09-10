@@ -7,6 +7,8 @@ import {
   ExpressionStatement,
   Identifier,
   IntegerLiteral,
+  PrefixExpression,
+  Expression,
 } from './ast';
 
 describe('parser', () => {
@@ -90,7 +92,37 @@ describe('parser', () => {
     expect((exp.expression as IntegerLiteral).value).to.equal(5);
     expect((exp.expression as IntegerLiteral).tokenLiteral()).to.equal('5');
   });
+
+  it('prefix expression', () => {
+    const tests: Array<[string, string, number]> = [['!5;', '!', 5], ['-5;', '-', 5]];
+
+    for (const [input, operator, value] of tests) {
+      const lexer = new Lexer(input);
+      const parser = new Parser(lexer);
+      const program = parser.parseProgram();
+      checkParserErrors(parser);
+
+      expect(program.statements.length, 'program.statements wrong!').to.equal(1);
+
+      const stmt = program.statements[0];
+      expect(stmt).to.be.an.instanceOf(ExpressionStatement);
+
+      const exp = stmt as ExpressionStatement;
+      expect(exp.expression).to.be.an.instanceOf(PrefixExpression);
+
+      const prefixExp = exp.expression as PrefixExpression;
+      expect(prefixExp.operator).to.equal(operator);
+      testIntegerLiteral(prefixExp.right, value);
+    }
+  });
 });
+
+function testIntegerLiteral(il: Expression, value: number) {
+  expect(il).to.be.an.instanceOf(IntegerLiteral);
+  const integ = il as IntegerLiteral;
+  expect(integ.value).to.equal(value);
+  expect(integ.tokenLiteral()).to.equal(`${value}`);
+}
 
 function checkParserErrors(parser: Parser) {
   const errors = parser.errors;

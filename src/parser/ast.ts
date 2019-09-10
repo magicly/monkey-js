@@ -109,6 +109,27 @@ class IntegerLiteral implements Expression {
     return this.token.literal;
   }
 }
+
+export class PrefixExpression implements Expression {
+  token: Token;
+  operator: string;
+  right: Expression;
+
+  constructor(token: Token, operator: string) {
+    this.token = token;
+    this.operator = operator;
+  }
+
+  expressionNode() {}
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+  astString(): string {
+    return `(${this.operator}${this.right.astString()})`;
+  }
+}
+
 export {
   Statement,
   Program,
