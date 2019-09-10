@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import * as token from '../lexer/token';
 import { Lexer } from '../lexer/lexer';
 import { Parser } from './parser';
 import { LetStatement, ReturnStatement } from './ast';

@@ -2,6 +2,7 @@ import { Token } from '../lexer/token';
 
 interface ASTNode {
   tokenLiteral(): string;
+  astString(): string;
 }
 
 interface Statement extends ASTNode {
@@ -21,6 +22,14 @@ class Program implements ASTNode {
     }
     return '';
   }
+
+  astString(): string {
+    let s = '';
+    for (const stmt of this.statements) {
+      s += stmt.astString();
+    }
+    return s;
+  }
 }
 
 class LetStatement implements Statement {
@@ -32,6 +41,9 @@ class LetStatement implements Statement {
   tokenLiteral(): string {
     return this.token.literal;
   }
+  astString(): string {
+    return `let ${this.name.astString()} = ${this.value.astString()};`;
+  }
 }
 
 class ReturnStatement implements Statement {
@@ -41,6 +53,22 @@ class ReturnStatement implements Statement {
   statementNode() {}
   tokenLiteral(): string {
     return this.token.literal;
+  }
+  astString(): string {
+    return `return ${this.returnValue.astString()};`;
+  }
+}
+
+class ExpressionStatement implements Statement {
+  token: Token;
+  expression: Expression;
+
+  statementNode() {}
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+  astString(): string {
+    return this.expression.astString();
   }
 }
 
@@ -57,6 +85,9 @@ class Identifier implements Expression {
 
   tokenLiteral(): string {
     return this.token.literal;
+  }
+  astString(): string {
+    return this.value;
   }
 }
 
