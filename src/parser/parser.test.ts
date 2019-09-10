@@ -1,7 +1,13 @@
 import { expect } from 'chai';
 import { Lexer } from '../lexer/lexer';
 import { Parser } from './parser';
-import { LetStatement, ReturnStatement, ExpressionStatement, Identifier } from './ast';
+import {
+  LetStatement,
+  ReturnStatement,
+  ExpressionStatement,
+  Identifier,
+  IntegerLiteral,
+} from './ast';
 
 describe('parser', () => {
   it('let statement', () => {
@@ -64,6 +70,25 @@ describe('parser', () => {
     const exp = stmt as ExpressionStatement;
     expect(exp.expression).to.be.an.instanceOf(Identifier);
     expect((exp.expression as Identifier).tokenLiteral()).to.equal('foobar');
+  });
+
+  it('integer literal', () => {
+    const input = `5;`;
+
+    const lexer = new Lexer(input);
+    const parser = new Parser(lexer);
+    const program = parser.parseProgram();
+    checkParserErrors(parser);
+
+    expect(program.statements.length).to.equal(1);
+
+    const stmt = program.statements[0];
+    expect(stmt).to.be.an.instanceOf(ExpressionStatement);
+
+    const exp = stmt as ExpressionStatement;
+    expect(exp.expression).to.be.an.instanceOf(IntegerLiteral);
+    expect((exp.expression as IntegerLiteral).value).to.equal(5);
+    expect((exp.expression as IntegerLiteral).tokenLiteral()).to.equal('5');
   });
 });
 

@@ -91,12 +91,31 @@ class Identifier implements Expression {
   }
 }
 
+class IntegerLiteral implements Expression {
+  token: Token;
+  value: number;
+
+  constructor(token: Token, value: number) {
+    this.token = token;
+    this.value = value;
+  }
+
+  expressionNode() {}
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+  astString(): string {
+    return this.token.literal;
+  }
+}
 export {
   Statement,
   Program,
   LetStatement,
   ReturnStatement,
   Identifier,
+  IntegerLiteral,
   Expression,
   ExpressionStatement,
 };

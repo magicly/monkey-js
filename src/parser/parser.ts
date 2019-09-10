@@ -8,6 +8,7 @@ import {
   ReturnStatement,
   Expression,
   ExpressionStatement,
+  IntegerLiteral,
 } from './ast';
 
 type prefixParseFn = () => Expression;
@@ -40,6 +41,7 @@ class Parser {
 
     this.prefixParseFns = new Map();
     this.registerPrefix(token.IDENT, this.parseIdentifier.bind(this));
+    this.registerPrefix(token.INT, this.parseIntegerLiteral.bind(this));
   }
 
   nextToken() {
@@ -91,6 +93,15 @@ class Parser {
 
   parseIdentifier(): Expression {
     return new Identifier(this.curToken, this.curToken.literal);
+  }
+  parseIntegerLiteral(): Expression {
+    const value = parseInt(this.curToken.literal, 10);
+    if (isNaN(value)) {
+      const msg = `could not parse ${this.curToken.literal} as a int`;
+      this.errors.push(msg);
+      return;
+    }
+    return new IntegerLiteral(this.curToken, value);
   }
 
   parseReturnStatement(): Statement {
