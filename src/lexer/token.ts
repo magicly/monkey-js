@@ -1,5 +1,7 @@
+type TokenType = string;
+
 interface Token {
-  type: string;
+  type: TokenType;
   literal: string;
 }
 
@@ -53,7 +55,7 @@ export function lookupIdent(ident: string): string {
   return IDENT;
 }
 
-export { Token };
+export { Token, TokenType };
 export {
   ILLEGAL,
   EOF,

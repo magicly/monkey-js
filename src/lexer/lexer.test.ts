@@ -2,10 +2,6 @@ import { expect } from 'chai';
 import * as token from './token';
 import { Lexer } from './lexer';
 
-interface TestType {
-  expectedType: string;
-  expectedLiteral: string;
-}
 describe('lexer', () => {
   it('nextToken', () => {
     const input = `
