@@ -1,6 +1,6 @@
 import { Lexer } from '../lexer/lexer';
 import * as token from '../lexer/token';
-import { Statement, Program, LetStatement, Identifier } from './ast';
+import { Statement, Program, LetStatement, Identifier, ReturnStatement } from './ast';
 
 class Parser {
   lexer: Lexer;
@@ -38,9 +38,24 @@ class Parser {
     if (this.curToken.type === token.LET) {
       return this.parseLetStatement();
     }
+    if (this.curToken.type === token.RETURN) {
+      return this.parseReturnStatement();
+    }
     return null;
   }
 
+  parseReturnStatement(): Statement {
+    const stmt = new ReturnStatement();
+    stmt.token = this.curToken;
+
+    this.nextToken();
+
+    while (!this.curTokenIs(token.SEMICOLON)) {
+      this.nextToken();
+    }
+
+    return stmt;
+  }
   parseLetStatement(): Statement {
     const stmt = new LetStatement();
     stmt.token = this.curToken;

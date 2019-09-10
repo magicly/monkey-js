@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as token from '../lexer/token';
 import { Lexer } from '../lexer/lexer';
 import { Parser } from './parser';
-import { LetStatement } from './ast';
+import { LetStatement, ReturnStatement } from './ast';
 
 describe('parser', () => {
   it('let statement', () => {
@@ -25,6 +25,26 @@ describe('parser', () => {
       expect(stmt.tokenLiteral()).to.equal('let');
       expect((stmt as LetStatement).name.value).to.equal(ident);
       expect((stmt as LetStatement).name.tokenLiteral()).to.equal(ident);
+    }
+  });
+
+  it('return statement', () => {
+    const input = `
+    return  5;
+    return 10 + 1;
+    return x;
+    `;
+
+    const lexer = new Lexer(input);
+    const parser = new Parser(lexer);
+    const program = parser.parseProgram();
+    checkParserErrors(parser);
+
+    expect(program.statements.length).to.equal(3);
+
+    for (const stmt of program.statements) {
+      expect(stmt instanceof ReturnStatement);
+      expect(stmt.tokenLiteral()).to.equal('return');
     }
   });
 });
